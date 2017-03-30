@@ -1,8 +1,15 @@
 #include <iostream>
 #include <random>
 #include <time.h>
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <thread>
+
 
 static const int MATRIX_SIZE = 3;
+static const int THREADS_NUMBER = 1;
+//unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
 
 struct Matrix {
   float elements [MATRIX_SIZE][MATRIX_SIZE];
@@ -66,10 +73,7 @@ struct Matrix {
 };
 
 
-
-
-int main() {
-  // Time library
+void a() {
   Matrix m1, m2;
   m1.initialize_test();
   m2.initialize_test();
@@ -78,5 +82,61 @@ int main() {
   Matrix r = m1.multiply(m2);
   r.print();
 
+
+}
+
+void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2){
+  // Calculate workload
+  const int n_elements = (MATRIX_SIZE * MATRIX_SIZE);
+
+  const int n_operations = n_elements / THREADS_NUMBER;
+  const int start_op = n_operations * thread_number;
+  const int end_op = (n_operations * (thread_number + 1)) - 1;
+
+  const int start_row = start_op % MATRIX_SIZE;
+  const int start_col = start_op / MATRIX_SIZE;
+
+  const int end_row = end_op % MATRIX_SIZE + 1;
+  const int end_col = end_op / MATRIX_SIZE + 1;
+
+
+  for (int i = start_row; i < end_row; ++i) {
+    for (int j = start_col; j < end_col; ++j) {
+      float r = 0.0f;
+      for (int k = 0; k < MATRIX_SIZE; ++k) {
+        const float e1 = m1.elements[i][k];
+        const float e2 = m2.elements[k][j];
+        r += e1 * e2;
+      }
+      result.elements[i][j] = r;
+    }
+  }
+  
+  int a = 2;
+}
+
+void b() {
+  std::thread threads[THREADS_NUMBER];
+
+  // Initialize threads
+  Matrix m1, m2;
+  m1.initialize_test();
+  m2.initialize_test();
+
+  Matrix r;
+  for (int i = 0; i < THREADS_NUMBER; ++i) {
+    threads[i] = std::thread(multiply_threading, std::ref(r), i, m1, m2);
+  }
+
+  r.print();
+
+  for (int i = 0; i < THREADS_NUMBER; ++i) {
+    threads[i].join();
+  }
+
+}
+
+int main() {
+  b();
   _sleep(10000);
 }
