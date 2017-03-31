@@ -1,13 +1,11 @@
 #include <iostream>
 #include <random>
-#include <time.h>
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <chrono>
 #include <thread>
+#include <windows.h>
 
 static const long MATRIX_SIZE = 1000;
-static const int THREADS_NUMBER = 1;
+static const int THREADS_NUMBER = 8;
 
 struct Matrix {
   float ** elements;
@@ -53,6 +51,7 @@ Matrix multiply(const Matrix& m1, const Matrix& m2);
 void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2);
 void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2);
 void multithreading_execution(Matrix& r, const Matrix& m1, const Matrix& m2);
+long long milliseconds_now();
 
 int main() {
   // Initialize threads
@@ -82,16 +81,18 @@ Matrix multiply(const Matrix& m1, const Matrix& m2) {
   return r;
 }
 
-
 void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
   std::cout << "Starting main thread execution..." << std::endl;
-  // TODO: Set start timer
+  long long start_time = milliseconds_now();
 
   std::cout << "Calculating...." << std::endl;
   r = multiply(m1, m2);
 
-  // TODO: Set end timer
+  long long end_time = milliseconds_now();
   std::cout << "Finishing multithreading execution..." << std::endl;
+
+  long long elapsed_time = end_time - start_time;
+  std::cout << "Elapsed time:\t" << elapsed_time << " ms" << std::endl;
 }
 
 void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2) {
@@ -128,7 +129,7 @@ void multiply_threading(Matrix& result, const int thread_number, const Matrix& m
 
 void multithreading_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
   std::cout << "Starting multithreading execution..." << std::endl;
-  // TODO: Set start timer
+  long long start_time = milliseconds_now();
 
   std::thread threads[THREADS_NUMBER];
 
@@ -144,6 +145,22 @@ void multithreading_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
     threads[i].join();
   }
 
-  // TODO: Set end timer
+  long long end_time = milliseconds_now();
   std::cout << "Finishing multithreading execution..." << std::endl;
+
+  long long elapsed_time = end_time - start_time;
+  std::cout << "Elapsed time:\t" << elapsed_time << " ms" << std::endl;
+}
+
+long long milliseconds_now() {
+  static LARGE_INTEGER s_frequency;
+  static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
+  if (s_use_qpc) {
+    LARGE_INTEGER now;
+    QueryPerformanceCounter(&now);
+    return (1000LL * now.QuadPart) / s_frequency.QuadPart;
+  }
+  else {
+    return GetTickCount();
+  }
 }
