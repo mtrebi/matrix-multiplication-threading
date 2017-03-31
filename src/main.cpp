@@ -6,14 +6,16 @@
 #include <stdlib.h>
 #include <thread>
 
-static const long MATRIX_SIZE = 3;
+static const long MATRIX_SIZE = 1000;
 static const int THREADS_NUMBER = 8;
 
 struct Matrix {
-  float elements [MATRIX_SIZE][MATRIX_SIZE];
+  float ** elements;
 
   void initialize_zero() {
+    elements = new float*[MATRIX_SIZE];
     for (int i = 0; i < MATRIX_SIZE; ++i) {
+      elements[i] = new float[MATRIX_SIZE];
       for (int j = 0; j < MATRIX_SIZE; ++j) {
         elements[i][j] = 0.0f;
       }
@@ -22,9 +24,11 @@ struct Matrix {
 
   void initialize_random() {
     std::default_random_engine generator(time(NULL));
-    std::uniform_int_distribution<int> distribution(1, 1e9);
+    std::uniform_int_distribution<int> distribution(-1e9, 1e9);
     auto random = std::bind(distribution, generator);
+    elements = new float*[MATRIX_SIZE];
     for (int i = 0; i < MATRIX_SIZE; ++i) {
+      elements[i] = new float[MATRIX_SIZE];
       for (int j = 0; j < MATRIX_SIZE; ++j) {
         elements[i][j] = random();
       }
@@ -133,9 +137,9 @@ int main() {
   Matrix m1, m2, r;
   m1.initialize_random();
   m2.initialize_random();
+  r.initialize_zero();
 
   //mainthread_execution(r, m1, m2);
   multithreading_execution(r, m1, m2);
-
   Sleep(100000);
 }
