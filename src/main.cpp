@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <thread>
 
+// Definitions
+
 static const long MATRIX_SIZE = 1000;
 static const int THREADS_NUMBER = 1;
 
@@ -49,6 +51,24 @@ struct Matrix {
 
 };
 
+// Forward declaration
+Matrix multiply(const Matrix& m1, const Matrix& m2);
+void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2);
+void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2);
+void multithreading_execution(Matrix& r, const Matrix& m1, const Matrix& m2);
+const double elapsed_time(timespec& m_start, timespec& m_end);
+
+int main() {
+  // Initialize threads
+  Matrix m1, m2, r;
+  m1.initialize_random();
+  m2.initialize_random();
+  r.initialize_zero();
+
+  //mainthread_execution(r, m1, m2);
+  multithreading_execution(r, m1, m2);
+  Sleep(100000);
+}
 
 Matrix multiply(const Matrix& m1, const Matrix& m2) {
   Matrix r;
@@ -66,7 +86,6 @@ Matrix multiply(const Matrix& m1, const Matrix& m2) {
   return r;
 }
 
-
 void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
   std::cout << "Starting main thread execution..." << std::endl;
   // TODO: Set start timer
@@ -78,7 +97,7 @@ void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
   std::cout << "Finishing multithreading execution..." << std::endl;
 }
 
-void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2){
+void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2) {
   // Calculate workload
   const int n_elements = (MATRIX_SIZE * MATRIX_SIZE);
   const int n_operations = n_elements / THREADS_NUMBER;
@@ -132,14 +151,20 @@ void multithreading_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
   std::cout << "Finishing multithreading execution..." << std::endl;
 }
 
-int main() {
-  // Initialize threads
-  Matrix m1, m2, r;
-  m1.initialize_random();
-  m2.initialize_random();
-  r.initialize_zero();
+const double elapsed_time(timespec& m_start, timespec& m_end) {
+  timespec temp;
+  if ((m_end.tv_nsec - m_start.tv_nsec) < 0) {
+    temp.tv_sec = m_end.tv_sec - m_start.tv_sec - 1;
+    temp.tv_nsec = 1e9 + m_end.tv_nsec - m_start.tv_nsec;
+  }
+  else {
+    temp.tv_sec = m_end.tv_sec - m_start.tv_sec;
+    temp.tv_nsec = m_end.tv_nsec - m_start.tv_nsec;
+  }
 
-  //mainthread_execution(r, m1, m2);
-  multithreading_execution(r, m1, m2);
-  Sleep(100000);
+  const double time_sec = (double)temp.tv_sec;
+  const double time_nsec = (double)temp.tv_nsec;
+  const double time_msec = (time_sec * 1e3) + (time_nsec / 1e6);
+
+  return time_msec;
 }
