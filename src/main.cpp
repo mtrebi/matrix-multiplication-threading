@@ -7,7 +7,7 @@
 #include <thread>
 
 static const long MATRIX_SIZE = 1000;
-static const int THREADS_NUMBER = 8;
+static const int THREADS_NUMBER = 1;
 
 struct Matrix {
   float ** elements;
@@ -35,22 +35,6 @@ struct Matrix {
     }
   }
 
-  Matrix multiply(const Matrix& m) {
-    Matrix r;
-    for (int i = 0; i < MATRIX_SIZE; ++i) {
-      for (int j = 0; j < MATRIX_SIZE; ++j) {
-        float result = 0.0f;
-        for (int k = 0; k < MATRIX_SIZE; ++k) {
-          const float e1 = elements[i][k];
-          const float e2 = m.elements[k][j];
-          result += e1 * e2;
-        }
-        r.elements[i][j] = result;
-      }
-    }
-    return r;
-  }
-
   void print() {
     std::cout << std::endl;
     for (int i = 0; i < MATRIX_SIZE; ++i) {
@@ -66,13 +50,29 @@ struct Matrix {
 };
 
 
+Matrix multiply(const Matrix& m1, const Matrix& m2) {
+  Matrix r;
+  for (int i = 0; i < MATRIX_SIZE; ++i) {
+    for (int j = 0; j < MATRIX_SIZE; ++j) {
+      float result = 0.0f;
+      for (int k = 0; k < MATRIX_SIZE; ++k) {
+        const float e1 = m1.elements[i][k];
+        const float e2 = m2.elements[k][j];
+        result += e1 * e2;
+      }
+      r.elements[i][j] = result;
+    }
+  }
+  return r;
+}
+
+
 void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
   std::cout << "Starting main thread execution..." << std::endl;
   // TODO: Set start timer
 
   std::cout << "Calculating...." << std::endl;
-  r = m1;
-  r.multiply(m2);
+  r = multiply(m1, m2);
 
   // TODO: Set end timer
   std::cout << "Finishing multithreading execution..." << std::endl;
