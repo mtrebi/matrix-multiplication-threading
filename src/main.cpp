@@ -49,6 +49,22 @@ struct Matrix {
 
 };
 
+Matrix multiply(const Matrix& m1, const Matrix& m2);
+void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2);
+void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2);
+void multithreading_execution(Matrix& r, const Matrix& m1, const Matrix& m2);
+
+int main() {
+  // Initialize threads
+  Matrix m1, m2, r;
+  m1.initialize_random();
+  m2.initialize_random();
+  r.initialize_zero();
+
+  //mainthread_execution(r, m1, m2);
+  multithreading_execution(r, m1, m2);
+  Sleep(100000);
+}
 
 Matrix multiply(const Matrix& m1, const Matrix& m2) {
   Matrix r;
@@ -78,7 +94,7 @@ void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
   std::cout << "Finishing multithreading execution..." << std::endl;
 }
 
-void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2){
+void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2) {
   // Calculate workload
   const int n_elements = (MATRIX_SIZE * MATRIX_SIZE);
   const int n_operations = n_elements / THREADS_NUMBER;
@@ -130,16 +146,4 @@ void multithreading_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
 
   // TODO: Set end timer
   std::cout << "Finishing multithreading execution..." << std::endl;
-}
-
-int main() {
-  // Initialize threads
-  Matrix m1, m2, r;
-  m1.initialize_random();
-  m2.initialize_random();
-  r.initialize_zero();
-
-  //mainthread_execution(r, m1, m2);
-  multithreading_execution(r, m1, m2);
-  Sleep(100000);
 }
