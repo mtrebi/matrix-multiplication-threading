@@ -4,7 +4,7 @@
 #include <thread>
 #include <windows.h>
 
-static const long MATRIX_SIZE = 1000;
+static const long MATRIX_SIZE = 10000;
 static const int THREADS_NUMBER = 8;
 
 struct Matrix {
@@ -22,7 +22,7 @@ struct Matrix {
 
   void initialize_random() {
     std::default_random_engine generator(time(NULL));
-    std::uniform_int_distribution<int> distribution(-1e9, 1e9);
+    std::uniform_real_distribution<double> distribution(-1e9, 1e9);
     auto random = std::bind(distribution, generator);
     elements = new float*[MATRIX_SIZE];
     for (int i = 0; i < MATRIX_SIZE; ++i) {
