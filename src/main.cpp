@@ -6,8 +6,8 @@
 
 
 static const long MATRIX_SIZE = 3;
-static const int THREADS_NUMBER = 1;
-static const long N_EXECUTIONS = 1000;
+static const int THREADS_NUMBER = 8;
+static const long N_EXECUTIONS = 1;
 
 struct Matrix {
   float ** elements;
@@ -54,11 +54,21 @@ void multiply(Matrix& r, const Matrix& m1, const Matrix& m2);
 void single_execution(Matrix& r, long long& elapsed_time, const Matrix& m1, const Matrix& m2);
 void multithreading_execution(Matrix& r, long long& elapsed_time, const Matrix& m1, const Matrix& m2);
 void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2);
-
+void benchmark_execution(void(*execution_function)(Matrix& r, long long& elapsed_time, const Matrix& m1, const Matrix& m2));
 long long milliseconds_now();
 
 int main() {
-  // Initialize threads
+
+  benchmark_execution(single_execution);
+  benchmark_execution(multithreading_execution);
+
+  //multithreading_execution(r, m1, m2);
+
+  //r.print();
+  Sleep(100000);
+}
+
+void benchmark_execution(void(*execution_function)(Matrix& r, long long& elapsed_time, const Matrix& m1, const Matrix& m2)) {
   Matrix m1, m2, r;
 
   long long total_time = 0.0;
@@ -68,17 +78,10 @@ int main() {
     m2.initialize_random();
     r.initialize_zero();
 
-    mainthread_execution(r, elapsed_time, m1, m2);
+    execution_function(r, elapsed_time, m1, m2);
     total_time += elapsed_time;
   }
-  std::cout << "Single execution: " << total_time / N_EXECUTIONS << " ms" << std::endl;
-
-
-
-  multithreading_execution(r, m1, m2);
-
-  //r.print();
-  Sleep(100000);
+  std::cout << "Execution took\t" << (float)total_time / N_EXECUTIONS << " ms" << std::endl;
 }
 
 void multiply(Matrix& r, const Matrix& m1, const Matrix& m2) {
