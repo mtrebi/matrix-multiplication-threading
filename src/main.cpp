@@ -5,9 +5,9 @@
 #include <windows.h>
 
 
-static const long MATRIX_SIZE = 3;
-static const int THREADS_NUMBER = 8;
-static const long N_EXECUTIONS = 100;
+static const long MATRIX_SIZE = 1000;
+static const int THREADS_NUMBER = 4;
+static const long N_EXECUTIONS = 1e3;
 
 struct Matrix {
   float ** elements;
@@ -62,6 +62,8 @@ int main() {
   benchmark_execution(single_execution);
   std::cout << "Multi thread execution" << std::endl;
   benchmark_execution(multithreading_execution);
+  Sleep(100000);
+  std::cout << "End of program" << std::endl;
 }
 
 void benchmark_execution(void(*execution_function)(Matrix& r, long long& elapsed_time, const Matrix& m1, const Matrix& m2)) {
