@@ -98,14 +98,14 @@ int end_op = (n_operations * (thread_number + 1));	// Exclusive
 Instead of working directly in the matrix, we calculate the indices in the one-dimensional array because its easier. Suppose that we have a 3x3 matrix and 3 threads:
 
 *  Thread 0: 
-** start_op = 3 * 0 = 0
-** end_op = 3 * (0 + 1) = 3;
+  * start_op = 3 * 0 = 0
+  * end_op = 3 * (0 + 1) = 3;
 * Thread 1:
-** start_op = 3 * 1 = 0
-** end_op = 3 * (1 + 1) = 3;
+  * start_op = 3 * 1 = 0
+  * end_op = 3 * (1 + 1) = 3;
 * Thread 2:
-** start_op = 3 * 2 = 6
-** end_op = 3 * (2 + 1) = 9;
+  * start_op = 3 * 2 = 6
+  * end_op = 3 * (2 + 1) = 9;
 
 See? The first thread does the first three multiplications, the second three more...But what happens to we do with the remainder of operations? Well, in reality the code doesn't look like before. We have to add an if statemente to detect this edge case:
 
@@ -126,14 +126,14 @@ else {
 I've decided to put the remainder of the jobs to the first thread. Since it's the one that it's created first, this should be the more sensible way of doing it. I've just added the rest operations to the end index. Then, I add the rest operations as an offset to the start and end indices to all the other threads. Now, assume that our matrix is 4x4 but we have 3 threads:
 
 *  Thread 0: 
-** start_op = 5 * 0 = 0
-** end_op = 5 * (0 + 1) + 1 = 6;
+  * start_op = 5 * 0 = 0
+  * end_op = 5 * (0 + 1) + 1 = 6;
 * Thread 1:
-** start_op = 5 * 1 + 1 = 6
-** end_op = 5 * (1 + 1) + 1 = 11;
+  * start_op = 5 * 1 + 1 = 6
+  * end_op = 5 * (1 + 1) + 1 = 11;
 * Thread 2:
-** start_op = 5 * 2 + 1 = 11
-** end_op = 5 * (2 + 1) + 1 = 16;
+  * start_op = 5 * 2 + 1 = 11
+  * end_op = 5 * (2 + 1) + 1 = 16;
 
 Cool, we know what each thread has to do, so let's do the actual multiplication:
 
