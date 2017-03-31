@@ -147,7 +147,7 @@ void multithreading_execution(Matrix& r, long long& elapsed_time, const Matrix& 
 
   for (int i = 0; i < THREADS_NUMBER; ++i) {
     //std::cout << "Starting thread " << i << std::endl;
-    threads[i] = std::thread(multiply_threading, std::ref(r), i, m1, m2);
+    threads[i] = std::thread(multiply_threading, std::ref(r), i, std::ref(m1), std::ref(m2));
   }
 
   //std::cout << "Calculating...." << std::endl;
