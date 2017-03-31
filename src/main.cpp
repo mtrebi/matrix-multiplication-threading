@@ -4,8 +4,8 @@
 #include <thread>
 #include <windows.h>
 
-static const long MATRIX_SIZE = 10000;
-static const int THREADS_NUMBER = 8;
+static const long MATRIX_SIZE = 3;
+static const int THREADS_NUMBER = 1;
 
 struct Matrix {
   float ** elements;
@@ -48,7 +48,7 @@ struct Matrix {
 
 };
 
-Matrix multiply(const Matrix& m1, const Matrix& m2);
+void multiply(Matrix& r, const Matrix& m1, const Matrix& m2);
 void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2);
 void multiply_threading(Matrix& result, const int thread_number, const Matrix& m1, const Matrix& m2);
 void multithreading_execution(Matrix& r, const Matrix& m1, const Matrix& m2);
@@ -61,15 +61,14 @@ int main() {
   m2.initialize_random();
   r.initialize_zero();
 
-  //mainthread_execution(r, m1, m2);
+  mainthread_execution(r, m1, m2);
   multithreading_execution(r, m1, m2);
 
   //r.print();
   Sleep(100000);
 }
 
-Matrix multiply(const Matrix& m1, const Matrix& m2) {
-  Matrix r;
+void multiply(Matrix& r, const Matrix& m1, const Matrix& m2) {
   for (int i = 0; i < MATRIX_SIZE; ++i) {
     for (int j = 0; j < MATRIX_SIZE; ++j) {
       float result = 0.0f;
@@ -81,7 +80,6 @@ Matrix multiply(const Matrix& m1, const Matrix& m2) {
       r.elements[i][j] = result;
     }
   }
-  return r;
 }
 
 void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
@@ -89,7 +87,7 @@ void mainthread_execution(Matrix& r, const Matrix& m1, const Matrix& m2) {
   long long start_time = milliseconds_now();
 
   std::cout << "Calculating...." << std::endl;
-  r = multiply(m1, m2);
+  multiply(r, m1, m2);
 
   long long end_time = milliseconds_now();
   std::cout << "Finishing multithreading execution..." << std::endl;
