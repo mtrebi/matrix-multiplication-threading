@@ -58,14 +58,10 @@ void benchmark_execution(void(*execution_function)(Matrix& r, long long& elapsed
 long long milliseconds_now();
 
 int main() {
-
+  std::cout << "Single execution" << std::endl;
   benchmark_execution(single_execution);
+  std::cout << "Multi thread execution" << std::endl;
   benchmark_execution(multithreading_execution);
-
-  //multithreading_execution(r, m1, m2);
-
-  //r.print();
-  Sleep(100000);
 }
 
 void benchmark_execution(void(*execution_function)(Matrix& r, long long& elapsed_time, const Matrix& m1, const Matrix& m2)) {
@@ -81,7 +77,7 @@ void benchmark_execution(void(*execution_function)(Matrix& r, long long& elapsed
     execution_function(r, elapsed_time, m1, m2);
     total_time += elapsed_time;
   }
-  std::cout << "Average execution took\t" << (float) total_time / N_EXECUTIONS << " ms" << std::endl;
+  std::cout << "\tAverage execution took\t" << (double) total_time / N_EXECUTIONS << " ms" << std::endl;
 }
 
 void multiply(Matrix& r, const Matrix& m1, const Matrix& m2) {
