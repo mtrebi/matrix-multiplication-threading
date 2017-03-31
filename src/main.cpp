@@ -7,7 +7,7 @@
 
 static const long MATRIX_SIZE = 3;
 static const int THREADS_NUMBER = 8;
-static const long N_EXECUTIONS = 1;
+static const long N_EXECUTIONS = 100;
 
 struct Matrix {
   float ** elements;
@@ -81,7 +81,7 @@ void benchmark_execution(void(*execution_function)(Matrix& r, long long& elapsed
     execution_function(r, elapsed_time, m1, m2);
     total_time += elapsed_time;
   }
-  std::cout << "Execution took\t" << (float)total_time / N_EXECUTIONS << " ms" << std::endl;
+  std::cout << "Average execution took\t" << (float) total_time / N_EXECUTIONS << " ms" << std::endl;
 }
 
 void multiply(Matrix& r, const Matrix& m1, const Matrix& m2) {
@@ -99,14 +99,14 @@ void multiply(Matrix& r, const Matrix& m1, const Matrix& m2) {
 }
 
 void single_execution(Matrix& r, long long& elapsed_time, const Matrix& m1, const Matrix& m2) {
-  std::cout << "Starting single thread execution..." << std::endl;
+  //std::cout << "Starting single thread execution..." << std::endl;
   long long start_time = milliseconds_now();
 
-  std::cout << "Calculating...." << std::endl;
+  //std::cout << "Calculating...." << std::endl;
   multiply(r, m1, m2);
 
   long long end_time = milliseconds_now();
-  std::cout << "Finishing single thread execution..." << std::endl;
+  //std::cout << "Finishing single thread execution..." << std::endl;
 
   elapsed_time = end_time - start_time;
 }
@@ -144,25 +144,25 @@ void multiply_threading(Matrix& result, const int thread_number, const Matrix& m
 }
 
 void multithreading_execution(Matrix& r, long long& elapsed_time, const Matrix& m1, const Matrix& m2) {
-  std::cout << "Starting multithreading execution..." << std::endl;
+  //std::cout << "Starting multithreading execution..." << std::endl;
   long long start_time = milliseconds_now();
 
   std::thread threads[THREADS_NUMBER];
 
   for (int i = 0; i < THREADS_NUMBER; ++i) {
-    std::cout << "Starting thread " << i << std::endl;
+    //std::cout << "Starting thread " << i << std::endl;
     threads[i] = std::thread(multiply_threading, std::ref(r), i, m1, m2);
   }
 
-  std::cout << "Calculating...." << std::endl;
+  //std::cout << "Calculating...." << std::endl;
 
   for (int i = 0; i < THREADS_NUMBER; ++i) {
-    std::cout << "Joining thread " << i << std::endl;
+    //std::cout << "Joining thread " << i << std::endl;
     threads[i].join();
   }
 
   long long end_time = milliseconds_now();
-  std::cout << "Finishing multithreading execution..." << std::endl;
+  //std::cout << "Finishing multithreading execution..." << std::endl;
 
   elapsed_time = end_time - start_time;
 }
