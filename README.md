@@ -73,7 +73,7 @@ Now, all paremeters are passed by reference. We are saving a huge amount of time
 
 Before getting into the code, I am going to explain in with drawings because it is how I see it:
 
-<p align="center">  <img src="https://github.com/mtrebi/https://github.com/mtrebi/matrix-multiplication-threading/blob/master/docs/images/readme/matrix_equivalent_array.png"> </p>
+<p align="center">  <img src="https://github.com/mtrebi/matrix-multiplication-threading/blob/master/docs/matrix_equivalent_array.PNG"> </p>
 
 As you can see, this matrix can be easily translated into a one-dimensional array. The data is the same, the only thing that it changes it's how we represent the internal structure to store it. This idea was useful for me to see how to split the work in the different threads, like this:
 
@@ -98,8 +98,8 @@ int end_op = (n_operations * (thread_number + 1));	// Exclusive
 Instead of working directly in the matrix, we calculate the indices in the one-dimensional array because its easier. Suppose that we have a 3x3 matrix and 3 threads:
 
 *  Thread 0: 
-  * start_op = 3 * 0 = 0
-  * end_op = 3 * (0 + 1) = 3;
+   * start_op = 3 * 0 = 0
+   * end_op = 3 * (0 + 1) = 3;
 * Thread 1:
   * start_op = 3 * 1 = 0
   * end_op = 3 * (1 + 1) = 3;
@@ -126,8 +126,8 @@ else {
 I've decided to put the remainder of the jobs to the first thread. Since it's the one that it's created first, this should be the more sensible way of doing it. I've just added the rest operations to the end index. Then, I add the rest operations as an offset to the start and end indices to all the other threads. Now, assume that our matrix is 4x4 but we have 3 threads:
 
 *  Thread 0: 
-  * start_op = 5 * 0 = 0
-  * end_op = 5 * (0 + 1) + 1 = 6;
+   * start_op = 5 * 0 = 0
+   * end_op = 5 * (0 + 1) + 1 = 6;
 * Thread 1:
   * start_op = 5 * 1 + 1 = 6
   * end_op = 5 * (1 + 1) + 1 = 11;
@@ -190,13 +190,22 @@ void multiply_threading(Matrix& result, const int thread_number, const Matrix& m
 }
 ```
 
-# Results
+# Benchmarking
+
+To measure the execution time of the two different methods I executed 10.000 multiplications of each method. Then I just calculated the average execution time that can be seen below:
+
+<p align="center">  <img src="https://github.com/mtrebi/matrix-multiplication-threading/blob/master/docs/chart.PNG"> </p>
+
+At the beginning of the chart, the single execution in the main thread of more efficient because the workload is very small. The multi-thread execution is very slow because, even that they work in parallel, the workload is so small that it doesn't compensate for the overhead of creating, initializing and joining the threads.
+
+Nevertheless, as the workload increases (the matrices get bigger) the multi-threading options gets better and better. This is, obviusly, because each time, more and more work can be performed in parallel and the overhead is very small in comparision to the calculation time. 
+
 
 [To Do]
 
 
 # References
 
-C++ Multithreading, https://www.tutorialcup.com/cplusplus/multithreading.htm#Join-threads
+C++ Multithreading, https://www.tutorialcup.com/cplusplus/multithreading.htm
 
 MULTI-THREADED PROGRAMMING TERMINOLOGY in C++- 2017, http://www.bogotobogo.com/cplusplus/multithreaded.php
