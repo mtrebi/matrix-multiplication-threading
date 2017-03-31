@@ -192,17 +192,13 @@ void multiply_threading(Matrix& result, const int thread_number, const Matrix& m
 
 # Benchmarking
 
-To measure the execution time of the two different methods I executed 10.000 multiplications of each method. Then I just calculated the average execution time that can be seen below:
+To measure the execution time of the two different methods I executed 1.000 multiplications of each method. Then I just calculated the average execution time:
 
-<p align="center">  <img src="https://github.com/mtrebi/matrix-multiplication-threading/blob/master/docs/chart.PNG"> </p>
+<p align="center">  <img src="https://github.com/mtrebi/matrix-multiplication-threading/blob/master/docs/chart.png"> </p>
 
 At the beginning of the chart, the single execution in the main thread of more efficient because the workload is very small. The multi-thread execution is very slow because, even that they work in parallel, the workload is so small that it doesn't compensate for the overhead of creating, initializing and joining the threads.
 
 Nevertheless, as the workload increases (the matrices get bigger) the multi-threading options gets better and better. This is, obviusly, because each time, more and more work can be performed in parallel and the overhead is very small in comparision to the calculation time. 
-
-
-[To Do]
-
 
 # References
 
