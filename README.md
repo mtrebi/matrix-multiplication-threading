@@ -101,8 +101,8 @@ Instead of working directly in the matrix, we calculate the indices in the one-d
    * start_op = 3 * 0 = 0
    * end_op = 3 * (0 + 1) = 3;
 * Thread 1:
-  * start_op = 3 * 1 = 0
-  * end_op = 3 * (1 + 1) = 3;
+  * start_op = 3 * 1 = 3
+  * end_op = 3 * (1 + 1) = 6;
 * Thread 2:
   * start_op = 3 * 2 = 6
   * end_op = 3 * (2 + 1) = 9;
